@@ -1,0 +1,19 @@
+from nltk import trigrams, regexp_tokenize, FreqDist
+import random
+
+with open(input(), 'r', encoding='utf-8') as f:
+    trigrams_list = list(trigrams(regexp_tokenize(f.read(), r"[^\s]+")))
+freq_dist = {}
+for (t1, t2, t3) in trigrams_list:
+    head = t1 + ' ' + t2
+    freq_dist.setdefault(head, FreqDist())
+    freq_dist[head][t3] += 1
+for n in range(10):
+    sentence = random.choices(list(freq_dist.keys()))[0].split()
+    while not sentence[0][0].isupper() or sentence[0][-1] in ['.', '?', '!']:
+        sentence = random.choices(list(freq_dist.keys()))[0].split()
+    for n2 in range(3):
+        sentence.append(list(freq_dist[' '.join(sentence[-2:])])[0])
+    while sentence[-1][-1] not in ['.', '?', '!']:
+        sentence.append(list(freq_dist[' '.join(sentence[-2:])])[0])
+    print(*sentence)
